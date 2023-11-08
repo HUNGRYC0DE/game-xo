@@ -34,7 +34,7 @@ const Xo = () => {
       { activ: false, name: null },
     ]);
     setPlayers([
-      { block: 0, blockNum: [], name: "X", winner: false, winBlocks: [] },
+      { block: 0, blockNum: [], name: "X", winner: false, winBlocks: []},
       { block: 0, blockNum: [], name: "O", winner: false, winBlocks: [] },
     ]);
     setRound(0);
@@ -50,17 +50,13 @@ const Xo = () => {
         bord[index].name = players[0].name;
         players[0].block++;
         players[0].blockNum.push(index);
-        players[0].blockNum = players[0].blockNum.sort(function (a, b) {
-          return a - b;
-        });
+        players[0].blockNum = players[0].blockNum.sort()
       } else {
         bord[index].activ = true;
         bord[index].name = players[1].name;
         players[1].block++;
         players[1].blockNum.push(index);
-        players[1].blockNum = players[1].blockNum.sort(function (a, b) {
-          return a - b;
-        });
+        players[1].blockNum = players[1].blockNum.sort();
       }
       setRound(round + 1);
       Winner(bord);
@@ -86,12 +82,12 @@ const Xo = () => {
       ) {
         players.map((item) => {
           item.name === bord[a].name &&
-            ((item.winBlocks = lines[i]), (item.winner = true));
+            ((item.winBlocks.push(lines[i])), (item.winner = true));
         });
       }
     }
   }
-  console.log(players.filter((item) => item.winner)[0]?.name)
+  // console.log(players.filter((item) => item.winner)[0]?.winBlocks.flat().sort())
   return (
     <div className="grid grid-cols-3 gap-1 mt-20">
       <div className="col-span-3 bg bg-yellow-200 w-full h-40 flex justify-center items-center text-black text-[50px]">
@@ -109,7 +105,11 @@ const Xo = () => {
             onClick={() => handleClick(index)}
             key={index}
             className={`w-40 h-40 text-black text-[40px] ${
-              players.filter((item) => item.winner)[0]?.winBlocks.filter((item) => index === item)[0] === index ? "bg-green-600" : "bg-white"
+              players
+                .filter((item) => item.winner)[0]
+                ?.winBlocks.flat().sort().filter((item) => index === item)[0] === index
+                ? "bg-green-600"
+                : "bg-white"
             }`}
           >
             {item.name}
