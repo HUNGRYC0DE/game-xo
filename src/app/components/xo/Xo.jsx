@@ -4,22 +4,8 @@ import React, { useState } from "react";
 const Xo = () => {
   const [round, setRound] = useState(0);
   const [game, setGame] = useState([]);
-  const [players, setPlayers] = useState([
-    { block: 0, blockNum: [], name: "X", winner: false, winBlocks: []?.flat() },
-    { block: 0, blockNum: [], name: "O", winner: false, winBlocks: []?.flat() },
-  ]);
-
-  const [bord, setBord] = useState([
-    { activ: false, name: null, color: "bg-white" },
-    { activ: false, name: null, color: "bg-white" },
-    { activ: false, name: null, color: "bg-white" },
-    { activ: false, name: null, color: "bg-white" },
-    { activ: false, name: null, color: "bg-white" },
-    { activ: false, name: null, color: "bg-white" },
-    { activ: false, name: null, color: "bg-white" },
-    { activ: false, name: null, color: "bg-white" },
-    { activ: false, name: null, color: "bg-white" },
-  ]);
+  const [players, setPlayers] = useState([]);
+  const [bord, setBord] = useState([]);
 
   const handleResetBoard = () => {
     setBord([
@@ -102,25 +88,23 @@ const Xo = () => {
       }
     }
   }
-  // players.filter(
-  //   (item) =>
-  //     item.winner &&
-  //     console.log({
-  //       player: item.name,
-  //       winblock: [...new Set(item.winBlocks.flat())].sort(),
-  //     }))
   return (
     <div className="flex gap-2 w-full">
       <div className="grid grid-cols-3 gap-1 min-w-[488px] ml-10 mt-20 relative">
-        <div className="col-span-3 bg bg-yellow-200 w-full h-40 flex justify-center items-center text-black text-[50px]">
-          {players.filter((item) => item.winner)[0]?.winner
-            ? `Winner ${players.filter((item) => item.winner)[0].name}`
-            : round == 9
-            ? "draw"
-            : round % 2 == 0
-            ? "X"
-            : "O"}
-        </div>
+        {(game.length === 0) & (players.length === 0) ? (
+          ""
+        ) : (
+          <div className="col-span-3 bg bg-yellow-200 w-full h-40 flex justify-center items-center text-black text-[50px]">
+            {players.filter((item) => item.winner)[0]?.winner
+              ? `Winner ${players.filter((item) => item.winner)[0].name}`
+              : round == 9
+              ? "draw"
+              : round % 2 == 0
+              ? "X"
+              : "O"}
+          </div>
+        )}
+
         {players.filter((item) => item.winner)[0]?.winner && (
           <span className="absolute w-[488px] h-[488px] top-[164px]"></span>
         )}
@@ -138,10 +122,12 @@ const Xo = () => {
         <div className="col-span-3 flex items-center justify-center h-40">
           <button
             type="button"
-            className="w-40 h-20 bg-slate-800 rounded-md text-lg font-bold"
+            className="w-40 h-20 bg-slate-800 rounded-md text-[25px] font-bold"
             onClick={handleResetBoard}
           >
-            reset board
+            {(game.length === 0) & (players.length === 0)
+              ? "Start"
+              : "Reset Board"}
           </button>
         </div>
       </div>
