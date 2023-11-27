@@ -3,35 +3,35 @@ import React, { useState } from "react";
 
 const Xo = () => {
   const [round, setRound] = useState(0);
-
+  const [game, setGame] = useState([]);
   const [players, setPlayers] = useState([
-    { block: 0, blockNum: [], name: "X", winner: false, winBlocks: [] },
-    { block: 0, blockNum: [], name: "O", winner: false, winBlocks: [] },
+    { block: 0, blockNum: [], name: "X", winner: false, winBlocks: []?.flat() },
+    { block: 0, blockNum: [], name: "O", winner: false, winBlocks: []?.flat() },
   ]);
 
   const [bord, setBord] = useState([
-    { activ: false, name: null },
-    { activ: false, name: null },
-    { activ: false, name: null },
-    { activ: false, name: null },
-    { activ: false, name: null },
-    { activ: false, name: null },
-    { activ: false, name: null },
-    { activ: false, name: null },
-    { activ: false, name: null },
+    { activ: false, name: null, color: "bg-white" },
+    { activ: false, name: null, color: "bg-white" },
+    { activ: false, name: null, color: "bg-white" },
+    { activ: false, name: null, color: "bg-white" },
+    { activ: false, name: null, color: "bg-white" },
+    { activ: false, name: null, color: "bg-white" },
+    { activ: false, name: null, color: "bg-white" },
+    { activ: false, name: null, color: "bg-white" },
+    { activ: false, name: null, color: "bg-white" },
   ]);
 
   const handleResetBoard = () => {
     setBord([
-      { activ: false, name: null },
-      { activ: false, name: null },
-      { activ: false, name: null },
-      { activ: false, name: null },
-      { activ: false, name: null },
-      { activ: false, name: null },
-      { activ: false, name: null },
-      { activ: false, name: null },
-      { activ: false, name: null },
+      { activ: false, name: null, color: "bg-white" },
+      { activ: false, name: null, color: "bg-white" },
+      { activ: false, name: null, color: "bg-white" },
+      { activ: false, name: null, color: "bg-white" },
+      { activ: false, name: null, color: "bg-white" },
+      { activ: false, name: null, color: "bg-white" },
+      { activ: false, name: null, color: "bg-white" },
+      { activ: false, name: null, color: "bg-white" },
+      { activ: false, name: null, color: "bg-white" },
     ]);
     setPlayers([
       { block: 0, blockNum: [], name: "X", winner: false, winBlocks: [] },
@@ -80,59 +80,103 @@ const Xo = () => {
         bord[a].name === bord[b].name &&
         bord[a].name === bord[c].name
       ) {
-        players.map((item) => {
-          item.name === bord[a].name &&
-            (item.winBlocks.push(lines[i]), (item.winner = true));
+        players.flatMap((item) => {
+          item.name === bord[a].name
+            ? (item.winBlocks.push(lines[i]),
+              (item.winner = true),
+              bord.filter((a, b) =>
+                item.winBlocks
+                  .flat()
+                  ?.map((c, d) => c === b && (a.color = "bg-green-400"))
+              ))
+            : bord.filter((a, b) =>
+                item.blockNum
+                  .flat()
+                  ?.map((c, d) => c === b && (a.color = "bg-red-400"))
+              );
         });
+        setGame([
+          ...game,
+          { winner: players.filter((i) => i.winner)[0].name, bord: bord },
+        ]);
       }
     }
   }
-  players.filter(
-    (item) =>
-      item.winner &&
-      console.log({
-        player: item.name,
-        winblock: [...new Set(item.winBlocks.flat())].sort(),
-      })
-  );
+  // players.filter(
+  //   (item) =>
+  //     item.winner &&
+  //     console.log({
+  //       player: item.name,
+  //       winblock: [...new Set(item.winBlocks.flat())].sort(),
+  //     }))
   return (
-    <div className="grid grid-cols-3 gap-1 mt-20">
-      <div className="col-span-3 bg bg-yellow-200 w-full h-40 flex justify-center items-center text-black text-[50px]">
-        {players.filter((item) => item.winner)[0]?.winner
-          ? `Winner ${players.filter((item) => item.winner)[0].name}`
-          : round == 9
-          ? "draw"
-          : round % 2 == 0
-          ? "X"
-          : "O"}
-      </div>
-      {bord.map((item, index) => {
-        return (
+    <div className="flex gap-2 w-full">
+      <div className="grid grid-cols-3 gap-1 min-w-[488px] ml-10 mt-20 relative">
+        <div className="col-span-3 bg bg-yellow-200 w-full h-40 flex justify-center items-center text-black text-[50px]">
+          {players.filter((item) => item.winner)[0]?.winner
+            ? `Winner ${players.filter((item) => item.winner)[0].name}`
+            : round == 9
+            ? "draw"
+            : round % 2 == 0
+            ? "X"
+            : "O"}
+        </div>
+        {players.filter((item) => item.winner)[0]?.winner && (
+          <span className="absolute w-[488px] h-[488px] top-[164px]"></span>
+        )}
+        {bord.map((item, index) => {
+          return (
+            <button
+              onClick={() => handleClick(index)}
+              key={index}
+              className={`w-40 h-40 text-black text-[40px] ${item.color}`}
+            >
+              {item.name}
+            </button>
+          );
+        })}
+        <div className="col-span-3 flex items-center justify-center h-40">
           <button
-            onClick={() => handleClick(index)}
-            key={index}
-            className={`w-40 h-40 text-black text-[40px] ${
-              players
-                .filter((item) => item.winner)[0]
-                ?.winBlocks.flat()
-                .sort()
-                .filter((item) => index === item)[0] === index
-                ? "bg-green-600"
-                : "bg-white"
-            }`}
+            type="button"
+            className="w-40 h-20 bg-slate-800 rounded-md text-lg font-bold"
+            onClick={handleResetBoard}
           >
-            {item.name}
+            reset board
           </button>
-        );
-      })}
-      <div className="col-span-3 flex items-center justify-center h-40">
-        <button
-          type="button"
-          className="w-40 h-20 bg-slate-800 rounded-md text-lg font-bold"
-          onClick={handleResetBoard}
-        >
-          reset board
-        </button>
+        </div>
+      </div>
+      <div className="w-full h-fit m-5 flex flex-wrap gap-3 mt-20 justify-between">
+        <div className="w-full h-10 justify-around flex items-center bg-blue-400 text-black font-bold text-lg">
+          <p className="">
+            X = {game.filter((item) => item.winner === "X").length}
+          </p>
+          <p className="">History</p>
+          <p className="">
+            O = {game.filter((item) => item.winner === "O").length}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-3">
+          {game?.map((item, index) => {
+            return (
+              <div
+                key={index}
+                className="grid h-fit grid-cols-3 gap-1 Relative"
+              >
+                <span className="absolute w-[98px] h-[98px] "></span>
+                {item.bord.map((i, b) => {
+                  return (
+                    <div
+                      key={index + b}
+                      className={`w-[30px] h-[30px] col-span-1 ${i.color} justify-center items-center flex text-black`}
+                    >
+                      {i.name}
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
