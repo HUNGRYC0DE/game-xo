@@ -1,5 +1,6 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import Player from "./components/player";
 
 const Xo = () => {
   const [round, setRound] = useState(0);
@@ -83,18 +84,26 @@ const Xo = () => {
         });
         setGame([
           ...game,
-          { winner: players.filter((i) => i.winner)[0].name, bord: bord },
+          {
+            winner: players.filter((i) => i.winner)[0].name,
+            bord: bord,
+            show: false,
+          },
         ]);
       }
     }
   }
+  // players.filter((item) => item.winner && console.log(game));
   return (
-    <div className="flex gap-2 w-full">
-      <div className="grid grid-cols-3 gap-1 min-w-[488px] ml-10 mt-20 relative">
+    <div className="flex justify-center w-full">
+      {/*X leyout*/}
+      <Player player={"X"} game={game} />
+      {/*X leyout*/}
+      <div className="grid grid-cols-3 gap-1 min-w-[488px] relative">
         {(game.length === 0) & (players.length === 0) ? (
           ""
         ) : (
-          <div className="col-span-3 bg bg-yellow-200 w-full h-40 flex justify-center items-center text-black text-[50px]">
+          <div className="col-span-3 bg bg-gradient-to-r from-blue-500 to-yellow-500 w-full h-40 flex justify-center items-center text-black text-[50px]">
             {players.filter((item) => item.winner)[0]?.winner
               ? `Winner ${players.filter((item) => item.winner)[0].name}`
               : round == 9
@@ -104,19 +113,18 @@ const Xo = () => {
               : "O"}
           </div>
         )}
-
         {players.filter((item) => item.winner)[0]?.winner && (
           <span className="absolute w-[488px] h-[488px] top-[164px]"></span>
         )}
         {bord.map((item, index) => {
           return (
-            <button
+            <div
               onClick={() => handleClick(index)}
               key={index}
-              className={`w-40 h-40 text-black text-[40px] ${item.color}`}
+              className={`w-40 h-40 text-black text-[40px] ${item.color} flex items-center justify-center`}
             >
               {item.name}
-            </button>
+            </div>
           );
         })}
         <div className="col-span-3 flex items-center justify-center h-40">
@@ -131,39 +139,9 @@ const Xo = () => {
           </button>
         </div>
       </div>
-      <div className="w-full h-fit m-5 flex flex-wrap gap-3 mt-20 justify-between">
-        <div className="w-full h-10 justify-around flex items-center bg-blue-400 text-black font-bold text-lg">
-          <p className="">
-            X = {game.filter((item) => item.winner === "X").length}
-          </p>
-          <p className="">History</p>
-          <p className="">
-            O = {game.filter((item) => item.winner === "O").length}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-3">
-          {game?.map((item, index) => {
-            return (
-              <div
-                key={index}
-                className="grid h-fit grid-cols-3 gap-1 Relative"
-              >
-                <span className="absolute w-[98px] h-[98px] "></span>
-                {item.bord.map((i, b) => {
-                  return (
-                    <div
-                      key={index + b}
-                      className={`w-[30px] h-[30px] col-span-1 ${i.color} justify-center items-center flex text-black`}
-                    >
-                      {i.name}
-                    </div>
-                  );
-                })}
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      {/*O leyout*/}
+      <Player player={"O"} game={game} />
+      {/*O leyout*/}
     </div>
   );
 };
